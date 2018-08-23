@@ -99,7 +99,7 @@ func main() {
 		// TODO: keep and track increment....
 		for group, gstats := range stats.Stats {
 			for stat, value := range gstats {
-				metrics = fmt.Sprintf("%s%s,uid=%s,name=%s,group=%s,version=%d total=%d %d\n", metrics, group, uid, nameHistory[len(nameHistory)-1].Name, stat, stats.DataVersion, value, now)
+				metrics = fmt.Sprintf("%s%s,uid=%s,user=%s,name=%s,version=%d total=%d %d\n", metrics, group, uid, nameHistory[len(nameHistory)-1].Name, stat, stats.DataVersion, value, now)
 			}
 		}
 

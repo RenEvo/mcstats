@@ -1,0 +1,93 @@
+---
+version: "3"
+
+services:
+# stats dir: d:/data/minecraft/data/world/stats
+  minecraft:
+    ports:
+      - "25565:25565"
+    volumes:
+      - "d:/data/minecraft:/data"
+    environment:
+      SERVER_PORT: "25565"
+      TYPE: "VANILLA"
+      VERSION: "1.13.1"
+      EULA: "TRUE"
+      SNOOPER_ENABLED: "false"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "minecraft"
+      RCON_PORT: "25575"
+      ENABLE_QUERY: "false"
+      INIT_MEMORY: 1G
+      MAX_MEMORY: 3G
+      MAX_TICK_TIME: "60000"
+      CONSOLE: "false"
+      GUI: "false"
+      MAX_BUILD_HEIGHT: "256"
+      VIEW_DISTANCE: "15"
+      ONLINE_MODE: "true"
+      JVM_XX_OPTS: "-XX:+UseG1GC"
+      JVM_OPTS: ""
+      
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: "true"
+      ENABLE_COMMAND_BLOCK: "true"
+      FORCE_GAMEMODE: "true"
+      GENERATE_STRUCTURE: "true"
+      SPAWN_ANIMALS: "true"
+      SPAWN_MONSTERS: "true"
+      SPAWN_NPCS: "true"
+      ALLOW_FLIGHT: "true"
+
+      MOTD: "Welcome to RenEvo Server!"
+      LEVEL: "world"
+      MAX_PLAYERS: "5"
+      LEVEL_TYPE: DEFAULT
+      SEED: "RenEvo"
+      MODE: "survival"
+      HARDCORE: "false"
+      DIFFICULTY: normal
+      PVP: "true"
+      WHITELIST: RenEvo
+      OPS: RenEvo
+      
+    image: itzg/minecraft-server
+    restart: always
+  
+  rcon:
+    image: itzg/rcon
+    ports:
+      - "4326:4326"
+      - "4327:4327"
+    volumes:
+      - "rcon:/opt/rcon-web-admin/db"
+
+  influx:
+    image: influxdb:alpine
+    ports:
+      - "8086:8086/tcp"
+    volumes:
+      - influx:/var/lib/influxdb
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  chronograf:
+    image: chronograf:alpine
+    environment:
+      INFLUXDB_URL: http://influx:8086
+    ports:
+      - "8888:8888/tcp"
+    volumes:
+      - chronograf:/var/lib/chronograf
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+volumes:
+  rcon:
+  influx:
+  chronograf:
